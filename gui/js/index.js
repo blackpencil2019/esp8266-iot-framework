@@ -17,8 +17,9 @@ import Dash from "./dashboard.json";
 
 
 let loc;
-if (Config.find(entry => entry.name === "language")) {
-    loc = require("./lang/" + Config.find(entry => entry.name === "language").value + ".json");
+const langEntry = Config.find(entry => entry.name === "language");
+if (langEntry) {
+    loc = require("./lang/" + langEntry.value + ".json");
 } else {
     loc = require("./lang/en.json");
 }
@@ -120,6 +121,17 @@ function Root() {
 
 }
 
+const setFavicon = () => {
+    // FiBox
+    const boxSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`;
+    const faviconTag = document.querySelector('link[rel="shortcut icon"]');
+    faviconTag.href = `data:image/svg+xml;base64,${btoa(boxSvg.trim())}`;
+    faviconTag.type = 'image/svg+xml';
+};
 
+setFavicon();
+
+if (langEntry)
+    document.documentElement.lang = langEntry.value;
 
 ReactDOM.render(<Root />, document.getElementById("root"));
