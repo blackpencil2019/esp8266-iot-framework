@@ -97,42 +97,36 @@ export function FileListing(props) {
         let filtered = 0;
         for (let i = 0; i < state.files.length; i++) {
             const name = state.files[i].name;
-            if (state.files[i].isdir || typeof props.filter === "undefined"
-                || name.substr(name.length - (props.filter.length + 1)) == `.${props.filter}`) {filtered++;break;}
+            const isdir = state.files[i].isdir;
+            if (isdir || typeof props.filter === "undefined" || name.substr(name.length - (props.filter.length + 1)) == `.${props.filter}`) {
+                filtered++;
+                list = <>{list}
+                    <FileLine className={props.selectable || isdir ? "selectable" : ""}
+                        onClick={() => {
+                            if (isdir) { setCurrentDir(`${currentDir}${name}/`); }
+                            else if (typeof props.onSelect !== "undefined") { props.onSelect(name); }
+                        }}>
+                        <div style={{ flex: 3 }}>{isdir ? <Folder /> : <File />}<span>{name}</span></div>
+                        {!isdir && (
+                            <div style={{ flex: 1 }}><span>{FormatFileSize(state.files[i].size)}</span></div>
+                        )}
+                        <div>
+                            {!isdir && (
+                                <a href={`${props.API}/download${currentDir}${name}`} rel="noreferrer" target="_blank" onClick={(e) => { e.stopPropagation();}}>
+                                    <Button title={loc.filesDl}><Download /></Button>
+                                </a>
+                            )}
+                            <Fetch href={`${props.API}/api/files/remove?${isdir ? "dir" : "filename"}=${encodeURIComponent(currentDir + name)}`} POST onFinished={fetchData}>
+                                <RedButton title={loc.filesRm} ><Trash2 /></RedButton>
+                            </Fetch>   
+                        </div>
+                    </FileLine></>;
+            }
         }
 
         if (filtered == 0) {
             list = <FileLine><div>{loc.filesEmpty}</div></FileLine>;
-        } else {
-            for (let i = 0; i < state.files.length; i++) {
-                const name = state.files[i].name;
-                const isdir = state.files[i].isdir;
-                if (isdir || typeof props.filter === "undefined" ||
-                    name.substr(name.length - (props.filter.length + 1)) == `.${props.filter}`) {
-                    list = <>{list}
-                        <FileLine className={props.selectable || isdir ? "selectable" : ""}
-                            onClick={() => {
-                                if (isdir) { setCurrentDir(`${currentDir}${name}/`); }
-                                else if (typeof props.onSelect !== "undefined") { props.onSelect(name); }
-                            }}>
-                            <div style={{ flex: 3 }}>{isdir ? <Folder /> : <File />}<span>{name}</span></div>
-                            {!isdir && (
-                                <div style={{ flex: 1 }}><span>{FormatFileSize(state.files[i].size)}</span></div>
-                            )}
-                            <div>
-                                {!isdir && (
-                                    <a href={`${props.API}/download${currentDir}${name}`} rel="noreferrer" target="_blank" onClick={(e) => { e.stopPropagation();}}>
-                                        <Button title={loc.filesDl}><Download /></Button>
-                                    </a>
-                                )}
-                                <Fetch href={`${props.API}/api/files/remove?${isdir ? "dir" : "filename"}=${encodeURIComponent(currentDir + name)}`} POST onFinished={fetchData}>
-                                    <RedButton title={loc.filesRm} ><Trash2 /></RedButton>
-                                </Fetch>   
-                            </div>
-                        </FileLine></>;
-                }
-            }   
-        }  
+        }
     } else {
         list = <FileLine><div><Spinner /></div></FileLine>;
     }
