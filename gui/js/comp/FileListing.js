@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Fetch, Flex, RedButton, Button, buttonStyle, cPrimary, Alert, Spinner } from "./UiComponents";
-import { FiFile as File, FiFolder as Folder, FiTrash2 as Trash2, FiDownload as Download, FiArrowUp as ArrowUp } from "react-icons/fi";
+import { FiFile as File, FiFolder as Folder, FiTrash2 as Trash2, FiDownload as Download, FiArrowUp as ArrowUp, FiFolderPlus as FolderPlus } from "react-icons/fi";
 
 import Config from "./../configuration.json";
 let loc;
@@ -64,6 +64,13 @@ const FileLine = styled(Flex)`
             margin-bottom:0.4em;
         }
     }
+`;
+
+const ToolButton = styled.span`
+     cursor: pointer;
+     padding: 4px;
+     margin: 0px 4px;
+     vertical-align: middle;
 `;
 
 export function FileListing(props) {
@@ -146,16 +153,28 @@ export function FileListing(props) {
         return lastSlashIdx === 0 ? '/' : path.substring(0, lastSlashIdx + 1);
     };
 
+    const createDir = () => {
+        const dirName = prompt("Name");
+        if (!dirName || !dirName.trim()) return;
+        fetch(`${props.API}/api/files/mkdir?dir=${currentDir}${dirName.trim()}`, { method: "POST" })
+            .then(res => {
+                if (res.ok) fetchData();
+            });
+    };
+
     return <><Flex>
         <div><Upload action={`${props.API}/upload`} onFinished={fetchData} filter={props.filter} /></div>
         {parseInt(state.max) > 0 ? <div>{Math.round(state.used / 1000)} / {Math.round(state.max / 1000)} kB {loc.filesUsed}</div> : ""}
     </Flex>
-        <h3>{header}
-            { (currentDir != '/') && (
-                <span style={{ cursor: 'pointer', padding: '4px', margin: '0px 8px', verticalAlign: 'middle' }}
-                    onClick={() => { setCurrentDir(goBackDir(currentDir)); }}><ArrowUp />
-                </span>
-            )}
+        <h3>
+            <Flex>{header}
+                <div>
+                    { (currentDir != '/') && (
+                        <ToolButton onClick={() => { setCurrentDir(goBackDir(currentDir)); }}><ArrowUp /></ToolButton>
+                    )}
+                    <ToolButton onClick={createDir}><FolderPlus /></ToolButton>
+                </div>
+            </Flex>
         </h3>{list}</>;
     
 }
