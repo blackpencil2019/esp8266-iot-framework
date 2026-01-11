@@ -15,7 +15,7 @@ if (Config.find(entry => entry.name === "language")) {
 }
 
 const FileLine = styled(Flex)`
-    padding:0.35em 0em;
+    padding:0.35em 0.35em;
     border-bottom:1px solid #ddd;
     
     :last-child 
@@ -28,8 +28,8 @@ const FileLine = styled(Flex)`
             text-decoration:underline;
         }
         cursor:pointer;
-        padding-left:0.35em;
-        padding-right:0.35em;
+        // padding-left:0.35em;
+        // padding-right:0.35em;
     }
 
     &.selectable:hover {
@@ -202,7 +202,7 @@ const FileLabel = styled.label`
     ${buttonStyle}  
 
     display:inline-block;
-    width:100px;
+    //width:100px;
     text-align:center;
     
     @media (max-width: 500px) 

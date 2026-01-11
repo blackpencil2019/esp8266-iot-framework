@@ -20,7 +20,7 @@ const Grey = styled.span`
 
 const Display = styled.p`
     span, & > div {
-        border-radius:3px;
+        border-radius:10px;
         padding:0.3em;
         display:inline-block;
         border:1px solid #c0d1de;

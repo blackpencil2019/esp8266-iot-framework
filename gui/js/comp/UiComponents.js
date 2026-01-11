@@ -4,12 +4,14 @@ import { normalize } from "styled-normalize";
 import { FiLoader as Loader, FiMenu as MenuIcon } from "react-icons/fi";
 import PropTypes from "prop-types";
 
-export const cPrimary = "#0055ff"; 
-export const cPrimaryHover = "#0066ee"; 
+export const cPrimary = "#0d99ff";
+export const cPrimaryHover = "#0d99ff";
 export const cHeader = "#111";
 export const cHeaderHover = "#333"; 
-export const cSecondary = "#ff00cc";
-export const cSecondaryHover = "#cc0099"; 
+export const cSecondary = "#ff24bd";
+export const cSecondaryHover = "#ea10ac";
+export const cError = "#f24822";
+export const cErrorHover = "#bd2915"
 
 import Config from "./../configuration.json";
 let loc;
@@ -97,7 +99,7 @@ export const Header = styled(HeaderSrc)`
         color: #fff;
         padding:0.6em;
         margin-right:1em;
-        border-radius:3px;
+        border-radius:12px;
     }
 
     li:last-of-type a {
@@ -307,6 +309,7 @@ export const Form = styled.form`
         max-width:100%;
         box-sizing: border-box;
         padding:0.3em;
+        border-radius: 4px;
     }
 
     select {
@@ -351,8 +354,9 @@ export const Form = styled.form`
     }
 
     input[type=checkbox] {
-        width: auto;
-        margin:12px 0px;
+        width: 19px;
+        height: 19px;
+        margin:9px 0px;
     }
 `;
 
@@ -360,8 +364,8 @@ export const buttonStyle = css`
     background-color: ${cPrimary};
     color:#fff;
     border:none;
-    padding:0.5em; 
-    border-radius:4px;
+    padding: 0.5em 1em;
+    border-radius: 12px;
     cursor:pointer;
 
     &:hover {
@@ -395,10 +399,10 @@ export const CancelButton = styled(Button)`
 `;
 
 export const RedButton = styled(Button)` 
-    background-color:#cc2200;
+    background-color: ${cError}; //#cc2200;
 
     :hover {
-        background-color:#bb3300;
+        background-color: ${cErrorHover};  //#bb3300;
     }
 `;
 

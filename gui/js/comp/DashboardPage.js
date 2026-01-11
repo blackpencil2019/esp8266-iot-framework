@@ -12,7 +12,7 @@ const Live = styled.span`
     color:#c4e052 !important;
     border: 1px solid #c4e052;
     background-color:#e6f9b8;     
-    border-radius:3px;
+    border-radius:8px;
     font-size:0.5em !important;  
     padding:0.2em; 
     vertical-align:0.3em;
@@ -22,7 +22,7 @@ const Connecting = styled.span`
     color:#ddd !important;
     border: 1px solid #ddd;
     background-color:#f4f4f4;
-    border-radius:3px;
+    border-radius:8px;
     font-size:0.5em !important;
     padding:0.2em;
     vertical-align:0.3em;
@@ -32,7 +32,7 @@ const Disconnected = styled.span`
     color:#ff3333 !important;
     border: 1px solid #ff3333;
     background-color:#ffb3b3;
-    border-radius:3px;
+    border-radius:8px;
     font-size:0.5em !important;
     padding:0.2em;
     vertical-align:0.3em;
