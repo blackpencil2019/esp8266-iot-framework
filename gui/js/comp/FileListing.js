@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Fetch, Flex, RedButton, Button, buttonStyle, cPrimary, Alert, Spinner } from "./UiComponents";
-import { FiFile as File, FiTrash2 as Trash2, FiDownload as Download } from "react-icons/fi";
+import { FiFile as File, FiFolder as Folder, FiTrash2 as Trash2, FiDownload as Download, FiArrowUp as ArrowUp } from "react-icons/fi";
 
 import Config from "./../configuration.json";
 let loc;
@@ -67,18 +67,26 @@ const FileLine = styled(Flex)`
 `;
 
 export function FileListing(props) {
-    const [state, setState] = useState({ files: [], used: 0, max: 0});
+    const [state, setState] = useState({ files: [], used: 0, max: 0 });
+    const [currentDir, setCurrentDir] = useState(props.listDir);
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [currentDir]);
 
     function fetchData() {
-        fetch(`${props.API}/api/files/get`)
+        fetch(`${props.API}/api/files/list?dir=${currentDir}`)
             .then((response) => {
                 return response.json();
             })
             .then((data) => {
+                data.files = data.files.sort((a, b) => {
+                    if (a.isdir && !b.isdir) return -1;
+                    if (!a.isdir && b.isdir) return 1;
+                    return a.name.localeCompare(b.name, undefined, {
+                        numeric: true
+                    });
+                });
                 setState(data);
             });
     }
@@ -88,25 +96,36 @@ export function FileListing(props) {
     if (state.max > 0) {
         let filtered = 0;
         for (let i = 0; i < state.files.length; i++) {
-            if (typeof props.filter === "undefined"
-                || state.files[i].substr(state.files[i].length - (props.filter.length + 1)) == `.${props.filter}`) {filtered++;}
+            const name = state.files[i].name;
+            if (state.files[i].isdir || typeof props.filter === "undefined"
+                || name.substr(name.length - (props.filter.length + 1)) == `.${props.filter}`) {filtered++;break;}
         }
 
         if (filtered == 0) {
             list = <FileLine><div>{loc.filesEmpty}</div></FileLine>;
         } else {
             for (let i = 0; i < state.files.length; i++) {
-                if (typeof props.filter === "undefined" ||
-                    state.files[i].substr(state.files[i].length - (props.filter.length + 1)) == `.${props.filter}`) {       
-                    const name = state.files[i];         
-                    list = <>{list}                        
-                        <FileLine className={props.selectable ? "selectable" : ""} onClick={() => {if (typeof props.onSelect !== "undefined") {props.onSelect(name);}}}>
-                            <div><File /><span>{state.files[i]}</span></div>
+                const name = state.files[i].name;
+                const isdir = state.files[i].isdir;
+                if (isdir || typeof props.filter === "undefined" ||
+                    name.substr(name.length - (props.filter.length + 1)) == `.${props.filter}`) {
+                    list = <>{list}
+                        <FileLine className={props.selectable || isdir ? "selectable" : ""}
+                            onClick={() => {
+                                if (isdir) { setCurrentDir(`${currentDir}${name}/`); }
+                                else if (typeof props.onSelect !== "undefined") { props.onSelect(name); }
+                            }}>
+                            <div style={{ flex: 3 }}>{isdir ? <Folder /> : <File />}<span>{name}</span></div>
+                            {!isdir && (
+                                <div style={{ flex: 1 }}><span>{FormatFileSize(state.files[i].size)}</span></div>
+                            )}
                             <div>
-                                <a href={`${props.API}/download/${state.files[i]}`} rel="noreferrer" target="_blank" onClick={(e) => { e.stopPropagation();}}>
-                                    <Button title={loc.filesDl}><Download /></Button>
-                                </a>                
-                                <Fetch href={`${props.API}/api/files/remove?filename=${encodeURIComponent(state.files[i])}`} POST onFinished={fetchData}>
+                                {!isdir && (
+                                    <a href={`${props.API}/download${currentDir}${name}`} rel="noreferrer" target="_blank" onClick={(e) => { e.stopPropagation();}}>
+                                        <Button title={loc.filesDl}><Download /></Button>
+                                    </a>
+                                )}
+                                <Fetch href={`${props.API}/api/files/remove?${isdir ? "dir" : "filename"}=${encodeURIComponent(currentDir + name)}`} POST onFinished={fetchData}>
                                     <RedButton title={loc.filesRm} ><Trash2 /></RedButton>
                                 </Fetch>   
                             </div>
@@ -126,20 +145,45 @@ export function FileListing(props) {
         header = loc.filesTitle;
     }
 
+    const goBackDir = (path) => {
+        if (path === '/')
+            return '/';
+        const lastSlashIdx = path.lastIndexOf('/', path.length - 2);
+        return lastSlashIdx === 0 ? '/' : path.substring(0, lastSlashIdx + 1);
+    };
+
     return <><Flex>
         <div><Upload action={`${props.API}/upload`} onFinished={fetchData} filter={props.filter} /></div>
         {parseInt(state.max) > 0 ? <div>{Math.round(state.used / 1000)} / {Math.round(state.max / 1000)} kB {loc.filesUsed}</div> : ""}
-    </Flex><h3>{header}</h3>{list}</>;
+    </Flex>
+        <h3>{header}
+            { (currentDir != '/') && (
+                <span style={{ cursor: 'pointer', padding: '4px', margin: '0px 8px', verticalAlign: 'middle' }}
+                    onClick={() => { setCurrentDir(goBackDir(currentDir)); }}><ArrowUp />
+                </span>
+            )}
+        </h3>{list}</>;
     
 }
+
+FileListing.defaultProps = {
+    listDir: "/",
+};
 
 FileListing.propTypes = {
     API: PropTypes.string,
     onSelect: PropTypes.func,
     filter: PropTypes.string,
     selectable: PropTypes.bool,
+    listDir: PropTypes.string,
 };
 
+const FormatFileSize = (bytes) => {
+    if (!bytes || bytes === 0) return "0 B";
+    const units = ["B", "KB", "MB", "GB", "TB"];
+    const index = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, index)).toFixed(2)} ${units[index]}`;
+};
 
 function Upload(props) {
     const [state, setState] = useState("");

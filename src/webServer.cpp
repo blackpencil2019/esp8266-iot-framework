@@ -89,9 +89,42 @@ void webServer::bindAll()
         request->send(200, PSTR("text/html"), JSON);
     });
 
+    //get file listing
+    server.on(PSTR("/api/files/list"), HTTP_GET, [](AsyncWebServerRequest *request) {
+        String JSON;
+        StaticJsonDocument<1000> jsonBuffer;
+        JsonArray files = jsonBuffer.createNestedArray("files");
+
+        //get file listing
+        Dir dir = LittleFS.openDir(request->arg("dir"));
+        while (dir.next())
+        {
+            JsonObject item = files.createNestedObject();
+            item["name"] = dir.fileName();
+            item["isdir"] = dir.isDirectory();
+            item["size"] = dir.isDirectory() ? 0 : dir.fileSize();
+        }
+
+        //get used and total data
+        FSInfo fs_info;
+        LittleFS.info(fs_info);
+        jsonBuffer["used"] = String(fs_info.usedBytes);
+        jsonBuffer["max"] = String(fs_info.totalBytes);
+
+        serializeJson(jsonBuffer, JSON);
+
+        request->send(200, PSTR("text/html"), JSON);
+    });
+
+    //make dir
+    server.on(PSTR("/api/files/mkdir"), HTTP_POST, [](AsyncWebServerRequest *request) {
+        LittleFS.mkdir(request->arg("dir"));
+        request->send(200, PSTR("text/html"), "");
+    });
+
     //remove file
     server.on(PSTR("/api/files/remove"), HTTP_POST, [](AsyncWebServerRequest *request) {
-        LittleFS.remove("/" + request->arg("filename"));
+        request->hasArg("dir") ? LittleFS.rmdir(request->arg("dir")) : LittleFS.remove(request->arg("filename"));
         request->send(200, PSTR("text/html"), "");
     });
 
