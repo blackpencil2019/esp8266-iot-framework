@@ -167,7 +167,8 @@ export function FileListing(props) {
         {parseInt(state.max) > 0 ? <div>{Math.round(state.used / 1000)} / {Math.round(state.max / 1000)} kB {loc.filesUsed}</div> : ""}
     </Flex>
         <h3>
-            <Flex>{header}
+            <Flex>
+                <div>{header}<span style={{ margin: '0em 1em'}}>{currentDir}</span></div>
                 <div>
                     { (currentDir != '/') && (
                         <ToolButton onClick={() => { setCurrentDir(goBackDir(currentDir)); }}><ArrowUp /></ToolButton>
