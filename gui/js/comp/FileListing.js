@@ -163,7 +163,7 @@ export function FileListing(props) {
     };
 
     return <><Flex>
-        <div><Upload action={`${props.API}/upload`} onFinished={fetchData} filter={props.filter} /></div>
+        <div><Upload action={`${props.API}/upload?dir=${currentDir}`} onFinished={fetchData} filter={props.filter} /></div>
         {parseInt(state.max) > 0 ? <div>{Math.round(state.used / 1000)} / {Math.round(state.max / 1000)} kB {loc.filesUsed}</div> : ""}
     </Flex>
         <h3>

@@ -207,6 +207,9 @@ void webServer::handleFileUpload(AsyncWebServerRequest *request, String filename
 
     if (!index)
     {
+        const String dir = request->arg("dir");
+        filename = dir + filename;
+
         Serial.println(PSTR("Start file upload"));
         Serial.println(filename);
 
