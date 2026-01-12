@@ -62,6 +62,7 @@ void webServer::bindAll()
 
         jsonBuffer["captivePortal"] = WiFiManager.isCaptivePortal();
         jsonBuffer["ssid"] = WiFiManager.SSID();
+        jsonBuffer["ip"] = (WiFi.getMode() != WIFI_AP) ? WiFi.localIP().toString() : WiFi.softAPIP().toString();
         serializeJson(jsonBuffer, JSON);
 
         request->send(200, PSTR("text/html"), JSON);

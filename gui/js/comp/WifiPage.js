@@ -87,7 +87,7 @@ export function WifiPage(props) {
         connectedTo = <>{loc.wifiConn} {state.ssid} (<a onClick={() => setForgetModal(true)}>{loc.wifiForget}</a>)</>;
     }
     
-    page = <>{page}<p>{connectedTo == null ? <Spinner /> : connectedTo}</p></>;
+    page = <>{page}<p>{connectedTo == null ? <Spinner /> : connectedTo}</p><p>{state.ip}</p></>;
 
     page = <>{page}<h3>{loc.wifiUpdate}</h3>{form}
         <Confirmation active={forgetModal}
