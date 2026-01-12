@@ -131,7 +131,7 @@ void webServer::bindAll()
 
     //update from LittleFS
     server.on(PSTR("/api/update"), HTTP_POST, [](AsyncWebServerRequest *request) {        
-        updater.requestStart("/" + request->arg("filename"));
+        updater.requestStart(request->arg("filename"));
         request->send(200, PSTR("text/html"), "");
     });
 

@@ -111,7 +111,7 @@ export function FileListing(props) {
                     <FileLine className={props.selectable || isdir ? "selectable" : ""}
                         onClick={() => {
                             if (isdir) { setCurrentDir(`${currentDir}${name}/`); }
-                            else if (typeof props.onSelect !== "undefined") { props.onSelect(name); }
+                            else if (typeof props.onSelect !== "undefined") { props.onSelect(currentDir+name); }
                         }}>
                         <div style={{ flex: 3 }}>{isdir ? <Folder /> : <File />}<span>{name}</span></div>
                         {!isdir && (
