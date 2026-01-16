@@ -30,6 +30,8 @@
     "filesEmpty": "Geen bestanden beschikbaar",
     "filesDl": "Download bestand",
     "filesRm": "Verwijder bestand",
+    "fileRename": "Rename",
+    "fileName": "Name",
     "filesFwTitle": "Selecteer een bestand",
     "filesTitle": "Bestandenlijst",
     "filesUsed": "in gebruik",

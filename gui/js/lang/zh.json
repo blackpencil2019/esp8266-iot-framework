@@ -30,6 +30,8 @@
     "filesEmpty": "没有任何可用文件",
     "filesDl": "下载文件",
     "filesRm": "移除文件",
+    "fileRename": "重命名",
+    "fileName": "名称",
     "filesFwTitle": "选择一个文件",
     "filesTitle": "文件列表",
     "filesUsed": "已用空间",

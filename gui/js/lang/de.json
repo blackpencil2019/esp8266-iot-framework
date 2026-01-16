@@ -30,6 +30,8 @@
     "filesEmpty": "Keine Dateien verfügbar",
     "filesDl": "Datei herunterladen",
     "filesRm": "Datei löschen",
+    "fileRename": "Rename",
+    "fileName": "Name",
     "filesFwTitle": "Datei auswählen",
     "filesTitle": "Datei Liste",
     "filesUsed": "Datei ausgewählt",
