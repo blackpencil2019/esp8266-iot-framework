@@ -129,6 +129,12 @@ void webServer::bindAll()
         request->send(200, PSTR("text/html"), "");
     });
 
+        //remove file
+    server.on(PSTR("/api/files/rename"), HTTP_POST, [](AsyncWebServerRequest *request) {
+        LittleFS.rename(request->arg("from"), request->arg("to"));
+        request->send(200, PSTR("text/html"), "");
+    });
+
     //update from LittleFS
     server.on(PSTR("/api/update"), HTTP_POST, [](AsyncWebServerRequest *request) {        
         updater.requestStart(request->arg("filename"));

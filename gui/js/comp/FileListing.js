@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Fetch, Flex, RedButton, Button, buttonStyle, cPrimary, Alert, Spinner } from "./UiComponents";
-import { FiFile as File, FiFolder as Folder, FiTrash2 as Trash2, FiDownload as Download, FiArrowUp as ArrowUp, FiFolderPlus as FolderPlus } from "react-icons/fi";
+import { FiFile as File, FiFolder as Folder, FiTrash2 as Trash2, FiDownload as Download, FiArrowUp as ArrowUp, FiFolderPlus as FolderPlus, FiEdit3 as Edit } from "react-icons/fi";
 
 import Config from "./../configuration.json";
 let loc;
@@ -98,6 +98,16 @@ export function FileListing(props) {
             });
     }
 
+    const renamePath = (e, name) => {
+        e.stopPropagation();
+        const newName = prompt(loc.fileName);
+        if (!newName || !newName.trim()) return;
+        fetch(`${props.API}/api/files/rename?from=${currentDir}${name}&to=${currentDir}${newName.trim()}`, { method: "POST" })
+            .then(res => {
+                if (res.ok) fetchData();
+            });
+    };
+
     let list;
         
     if (state.max > 0) {
@@ -123,6 +133,7 @@ export function FileListing(props) {
                                     <Button title={loc.filesDl}><Download /></Button>
                                 </a>
                             )}
+                            <span><Button title={loc.Rename} onClick={(e) => renamePath(e, name)}><Edit /></Button></span>
                             <Fetch href={`${props.API}/api/files/remove?${isdir ? "dir" : "filename"}=${encodeURIComponent(currentDir + name)}`} POST onFinished={fetchData}>
                                 <RedButton title={loc.filesRm} ><Trash2 /></RedButton>
                             </Fetch>   
