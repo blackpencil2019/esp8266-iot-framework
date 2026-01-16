@@ -165,7 +165,7 @@ export function FileListing(props) {
     };
 
     const createDir = () => {
-        const dirName = prompt("Name");
+        const dirName = prompt(loc.fileName);
         if (!dirName || !dirName.trim()) return;
         fetch(`${props.API}/api/files/mkdir?dir=${currentDir}${dirName.trim()}`, { method: "POST" })
             .then(res => {
@@ -184,7 +184,9 @@ export function FileListing(props) {
                     { (currentDir != '/') && (
                         <ToolButton onClick={() => { setCurrentDir(goBackDir(currentDir)); }}><ArrowUp /></ToolButton>
                     )}
-                    <ToolButton onClick={createDir}><FolderPlus /></ToolButton>
+                    {(typeof props.onSelect == "undefined") && (
+                        <ToolButton onClick={createDir}><FolderPlus /></ToolButton>
+                    )}
                 </div>
             </Flex>
         </h3>{list}</>;
