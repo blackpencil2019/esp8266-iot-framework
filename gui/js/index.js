@@ -72,9 +72,13 @@ function Root() {
     if (typeof projectVersion === "undefined") {
         projectVersion = Config.find(entry => entry.name === "projectVersion") ? Config.find(entry => entry.name === "projectVersion").value : "";
     }
+    let projectFooter = configData["projectFooter"];
+    if (typeof projectFooter === "undefined") {
+        projectFooter = Config.find(entry => entry.name === "projectFooter") ? Config.find(entry => entry.name === "projectFooter").value : "";
+    }
     
     return <><GlobalStyle />
-
+        <div className="content-wrapper">
         <BrowserRouter>
 
             <Header>
@@ -117,6 +121,8 @@ function Root() {
             </Page>
 
         </BrowserRouter>
+        </div>
+        <footer>{projectFooter?.trim() ? `${projectFooter} | ` : ''}Powered by <a href="https://github.com/blackpencil2019/esp8266-iot-framework/tree/custom">IoT Framework</a></footer>
     </>;
 
 }

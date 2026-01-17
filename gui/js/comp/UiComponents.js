@@ -35,6 +35,22 @@ export const GlobalStyle = createGlobalStyle`
         }
     }
 
+    #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .content-wrapper {
+        flex: 1;
+    }
+
+    footer {
+        text-align: center;
+        font-size: 0.5em;
+        color: #666;
+    }
+
     * {
         font-family: Arial, sans-serif;
     }
