@@ -11,8 +11,10 @@
 #include "updater.h"
 #include "dashboard.h"
 
-void webServer::begin()
+void webServer::begin(ArRequestHandlerFunction rh)
 {
+    if (rh) { requestHandler = rh; }
+    
     //to enable testing and debugging of the interface
     DefaultHeaders::Instance().addHeader(PSTR("Access-Control-Allow-Origin"), PSTR("*"));
 
@@ -205,6 +207,15 @@ void webServer::serveProgmem(AsyncWebServerRequest *request)
     response->addHeader(PSTR("Content-Encoding"), PSTR("gzip"));
     
     request->send(response);    
+}
+
+// Callback for the html
+void webServer::serveFs(AsyncWebServerRequest *request)
+{
+    // Dump the byte array in FS with a 200 HTTP code (OK)
+    AsyncWebServerResponse *response = request->beginResponse(LittleFS, PSTR("/iotfw/index.html"), PSTR("text/html"));
+    
+    request->send(response);
 }
 
 void webServer::handleFileUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
