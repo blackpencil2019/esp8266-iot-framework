@@ -10,7 +10,7 @@ def preBuildDashFun():
     filename = "dash"
     h = open(dir_path + "/../src/generated/" + filename + ".h", "w", encoding="utf8")
 
-    with open(dir_path + '/../gui/js/dashboard.json') as f:
+    with open(dir_path + '/../gui/js/dashboard.json', encoding='utf-8') as f:
         data = json.load(f)
 
     # binascii.crc32(mes.encode('utf8'))

@@ -12,16 +12,19 @@ bool config::begin(int numBytes)
     uint8_t checksumData = 0;
     uint8_t checksumInternal = 0;
 
+    reset();
+
     EEPROM.get(0, internal);
     EEPROM.get(SIZE_INTERNAL, checksumInternal);
     EEPROM.get(SIZE_INTERNAL + 1, storedVersion);
-    EEPROM.get(SIZE_INTERNAL + 5, data);
-    EEPROM.get(SIZE_INTERNAL + 5 + sizeof(data), checksumData);        
+    configDataPersist *persistData = (configDataPersist *)&data;
+    EEPROM.get(SIZE_INTERNAL + 5, *persistData);
+    EEPROM.get(SIZE_INTERNAL + 5 + sizeof(*persistData), checksumData);
 
     bool returnValue = true;
 
     //reset configuration data if checksum mismatch
-    if (checksumData != checksum(reinterpret_cast<uint8_t*>(&data), sizeof(data)) || storedVersion != configVersion)
+    if (checksumData != checksum(reinterpret_cast<uint8_t*>(persistData), sizeof(*persistData)) || storedVersion != configVersion)
     {
         Serial.println(PSTR("Config data checksum mismatch"));
         reset();
@@ -43,7 +46,6 @@ bool config::begin(int numBytes)
 void config::reset()
 {
     memcpy_P(&data, &defaults, sizeof(data));
-    requestSave = true;
 }
 
 void config::saveRaw(uint8_t bytes[])
@@ -65,12 +67,13 @@ void config::save()
     //save checksum for internal data
     EEPROM.put(SIZE_INTERNAL, checksum(reinterpret_cast<uint8_t*>(&internal), sizeof(internal)));
 
+    configDataPersist *persistData = (configDataPersist *)&data;
     EEPROM.put(SIZE_INTERNAL + 1, configVersion);
-    EEPROM.put(SIZE_INTERNAL + 5, data);
+    EEPROM.put(SIZE_INTERNAL + 5, *persistData);
 
     //save checksum for configuration data
-    EEPROM.put(SIZE_INTERNAL + 5 + sizeof(data), checksum(reinterpret_cast<uint8_t*>(&data), sizeof(data)));
-    
+    EEPROM.put(SIZE_INTERNAL + 5 + sizeof(*persistData), checksum(reinterpret_cast<uint8_t *>(persistData), sizeof(*persistData)));
+
     EEPROM.commit();
 
     if ( _configsavecallback != NULL) {

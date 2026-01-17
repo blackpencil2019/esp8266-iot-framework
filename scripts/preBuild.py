@@ -52,13 +52,12 @@ for item in env.get("CPPDEFINES", []):
     elif isinstance(item, tuple) and item[0].lower() == "openssl":
         openssl = item[1]
 
-if html:
-    preBuildHTMLFun()
 if config:
     preBuildConfigFun()
 if dash:
     preBuildDashFun()
 if certs:
     preBuildCertificatesFun(domains, openssl)
-
+if html:
+    preBuildHTMLFun()
 
