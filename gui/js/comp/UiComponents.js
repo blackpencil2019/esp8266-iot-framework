@@ -5,7 +5,7 @@ import { FiLoader as Loader, FiMenu as MenuIcon } from "react-icons/fi";
 import PropTypes from "prop-types";
 
 export const cPrimary = "#0d99ff";
-export const cPrimaryHover = "#0d99ff";
+export const cPrimaryHover = "#007be5";
 export const cHeader = "#111";
 export const cHeaderHover = "#333"; 
 export const cSecondary = "#ff24bd";
